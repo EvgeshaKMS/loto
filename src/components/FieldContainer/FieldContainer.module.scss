@@ -1,0 +1,37 @@
+@import 'src/assets/styles/templates';
+
+.container {
+  @include flex-col-gap(8px);
+
+  max-width: 400px;
+  min-width: 220px;
+  width: fit-content;
+  padding: 10px;
+
+  border: 1px solid var(--c_grey);
+  border-radius: $br_default;
+
+  section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: start;
+    width: fit-content;
+
+    h3 {
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    span {
+      font-weight: 400;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    & {
+      border: none;
+      padding: 0;
+    }
+  }
+}

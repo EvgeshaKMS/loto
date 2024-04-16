@@ -1,0 +1,46 @@
+@import 'src/assets/styles/templates';
+
+.container {
+  @include flex-col-gap(20px);
+
+  width: fit-content;
+  padding: 15px;
+
+  border-radius: $br_default;
+  background: var(--c_white);
+
+  h2 {
+    font-size: $fs_large;
+    font-weight: 600;
+  }
+
+  header{
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      cursor: pointer;
+
+      @media (hover: hover) {
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+
+      &:active {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  div {
+    display: flex;
+    gap: 15px;
+
+    @media screen and (max-width: 550px) {
+      & {
+        flex-direction: column;
+      }
+    }
+  }
+}

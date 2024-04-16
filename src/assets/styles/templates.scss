@@ -1,0 +1,22 @@
+// text
+
+$fs_h1: 24px;
+$fs_large: 20px;
+$fs_default: 16px;
+$fs_small: 12px;
+
+// border radius
+
+$br_default: 8px;
+$br_small: 5px;
+
+@mixin flex-col-gap($gap) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin flex-col {
+  display: flex;
+  flex-direction: column;
+}
