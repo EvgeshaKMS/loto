@@ -2,6 +2,7 @@
 
 .container {
   @include flex-col-gap(20px);
+  align-items: center;
 
   width: fit-content;
   padding: 15px;
@@ -14,9 +15,10 @@
     font-weight: 600;
   }
 
-  header{
+  header {
     display: flex;
     justify-content: space-between;
+    width: 100%;
 
     button {
       cursor: pointer;
@@ -33,13 +35,14 @@
     }
   }
 
-  div {
+  & > div {
     display: flex;
     gap: 15px;
+    flex-direction: column;
 
-    @media screen and (max-width: 550px) {
+    @media screen and (min-width: 550px) {
       & {
-        flex-direction: column;
+        flex-direction: row;
       }
     }
   }
