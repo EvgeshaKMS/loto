@@ -1,12 +1,14 @@
 import { Button, FieldContainer, TicketContainer } from 'components';
 
-import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import {
   onCounterChange,
   onFirstFieldSelect,
   onSecondFieldSelect,
-  onSubmit,
-} from './store/reducers/TicketSlice';
+  calculateResult,
+  selectRandomNumbers,
+  clearField,
+} from 'store/reducers/TicketSlice';
 
 import { ReactComponent as IcMagicWand } from './assets/icons/icon_magic-wand.svg';
 import { ReactComponent as IcClose } from './assets/icons/icon_close.svg';
@@ -15,8 +17,10 @@ import './assets/styles/theme.scss';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { firstField, secondField, isSelectedAll } = useAppSelector((state) => state.ticket);
-
+  const { firstField, secondField, isSelectedAll, isResultCalculated, result } = useAppSelector(
+    (state) => state.ticket,
+  );
+// todo: добавить отправку результата
   const handleSelect = (isFirstField: boolean, index: number) => {
     if (isFirstField) dispatch(onFirstFieldSelect(index));
     else dispatch(onSecondFieldSelect(index));
@@ -24,14 +28,35 @@ function App() {
   };
 
   const handleSubmit = () => {
-    dispatch(onSubmit());
+    dispatch(calculateResult());
+  };
+
+  const handleRandomizer = () => {
+    dispatch(clearField());
+    if (!isSelectedAll) dispatch(selectRandomNumbers());
+    dispatch(onCounterChange());
   };
 
   const randomButton = isSelectedAll ? <IcClose /> : <IcMagicWand />;
 
+  if (isResultCalculated) {
+    return (
+      <div className='App'>
+        <TicketContainer title='Билет 1'>
+          <div>
+            {result.isTicketWon
+              ? 'Ого, вы выиграли! Поздравляем!'
+              : 'К сожалению, вы ничего не выиграли =('}
+          </div>
+          {/* <div>Пожалуйста, подождите. Идет отправка результатов.</div> */}
+        </TicketContainer>
+      </div>
+    );
+  }
+
   return (
     <div className='App'>
-      <TicketContainer button={randomButton} title='Билет 1'>
+      <TicketContainer onButtonClick={handleRandomizer} button={randomButton} title='Билет 1'>
         <div>
           <FieldContainer fieldName='Поле 1' subName='Отметьте 8 чисел.'>
             {firstField.map((button, index) => (
@@ -56,7 +81,7 @@ function App() {
             ))}
           </FieldContainer>
         </div>
-        <Button onClick={handleSubmit} size='big'>
+        <Button disabled={!isSelectedAll} onClick={handleSubmit} size='big'>
           Показать результат
         </Button>
       </TicketContainer>

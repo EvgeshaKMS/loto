@@ -3,7 +3,7 @@
 .container {
   @include flex-col-gap(8px);
 
-  max-width: 400px;
+  max-width: none;
   min-width: 220px;
   width: fit-content;
   padding: 0;
@@ -29,6 +29,7 @@
 
   @media screen and (min-width: 550px) {
     & {
+      max-width: 400px;
       padding: 10px;
       border: 1px solid var(--c_grey);
       border-radius: $br_default;

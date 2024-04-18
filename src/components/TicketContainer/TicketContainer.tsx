@@ -10,7 +10,7 @@ const TicketContainer = ({ children, title, button, onButtonClick }: TicketConta
     <div className={styles.container}>
       <header>
         <h2>{title}</h2>
-        {button && <button onClick={handleButtonClick}>{button}</button>}
+        {button && <button onClick={onButtonClick}>{button}</button>}
       </header>
       {children}
     </div>

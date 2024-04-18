@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TTicketState } from '../../types/general';
+import { createRandomArray } from 'utils/createRandomArray';
+import { TTicketState } from 'types/general';
 
 const initialState: TTicketState = {
   firstField: Array.from(Array(19), (_, i) => {
@@ -20,6 +21,7 @@ const initialState: TTicketState = {
     },
     isTicketWon: false,
   },
+  isResultCalculated: false,
 };
 
 const ticketSlice = createSlice({
@@ -32,8 +34,6 @@ const ticketSlice = createSlice({
         (state.selectCounter.first === 8 && state.firstField[action.payload].isSelected)
       ) {
         state.firstField[action.payload].isSelected = !state.firstField[action.payload].isSelected;
-
-        state.selectCounter.first = state.firstField.filter((item) => item.isSelected).length;
       }
     },
     onSecondFieldSelect(state, action: PayloadAction<number>) {
@@ -43,15 +43,40 @@ const ticketSlice = createSlice({
       ) {
         state.secondField[action.payload].isSelected =
           !state.secondField[action.payload].isSelected;
-
-        state.selectCounter.second = state.secondField.filter((item) => item.isSelected).length;
       }
     },
     onCounterChange(state) {
+      state.selectCounter.first = state.firstField.filter((item) => item.isSelected).length;
+
+      state.selectCounter.second = state.secondField.filter((item) => item.isSelected).length;
+
       state.isSelectedAll = state.selectCounter.first === 8 && state.selectCounter.second === 1;
     },
-    onSubmit(state) {
-      if (state.selectCounter.first === 8 && state.selectCounter.second === 1) {
+    selectRandomNumbers(state) {
+      let randomArray = createRandomArray(19, 8);
+      state.firstField.forEach((item, index) => {
+        if (randomArray.includes(item.number)) {
+          state.firstField[index].isSelected = true;
+        }
+      });
+
+      randomArray = createRandomArray(2, 1);
+      state.secondField.forEach((item, index) => {
+        if (randomArray.includes(item.number)) {
+          state.secondField[index].isSelected = true;
+        }
+      });
+    },
+    clearField(state) {
+      state.firstField = Array.from(Array(19), (_, i) => {
+        return { number: i + 1, isSelected: false };
+      });
+      state.secondField = Array.from(Array(2), (_, i) => {
+        return { number: i + 1, isSelected: false };
+      });
+    },
+    calculateResult(state) {
+      if (state.isSelectedAll && !state.isResultCalculated) {
         state.result.selectedNumber.firstField = state.firstField
           .filter((item) => item.isSelected)
           .map((item) => item.number);
@@ -59,13 +84,39 @@ const ticketSlice = createSlice({
           .filter((item) => item.isSelected)
           .map((item) => item.number);
 
-        // todo: add logic on comparing numbers
+        let randomArray = createRandomArray(19, 8);
+        let matchingNumbersCounter1 = 0;
+
+        state.firstField.forEach((item) => {
+          if (randomArray.includes(item.number) && item.isSelected) {
+            matchingNumbersCounter1++;
+          }
+        });
+
+        randomArray = createRandomArray(2, 1);
+        let matchingNumbersCounter2 = 0;
+
+        state.secondField.forEach((item) => {
+          if (randomArray.includes(item.number) && item.isSelected) matchingNumbersCounter2++;
+        });
+
+        state.result.isTicketWon =
+          matchingNumbersCounter1 >= 4 ||
+          (matchingNumbersCounter1 >= 3 && matchingNumbersCounter2 >= 1);
+
+        state.isResultCalculated = true;
       }
     },
   },
 });
 
-export const { onFirstFieldSelect, onSecondFieldSelect, onCounterChange, onSubmit } =
-  ticketSlice.actions;
+export const {
+  onFirstFieldSelect,
+  onSecondFieldSelect,
+  onCounterChange,
+  calculateResult,
+  selectRandomNumbers,
+  clearField,
+} = ticketSlice.actions;
 
 export default ticketSlice.reducer;

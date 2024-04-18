@@ -19,4 +19,5 @@ export type TTicketState = {
   selectCounter: TSelectCounter;
   isSelectedAll: boolean;
   result: TResult;
+  isResultCalculated: boolean;
 };

@@ -4,7 +4,7 @@
   @include flex-col-gap(20px);
   align-items: center;
 
-  width: fit-content;
+  width: 100%;
   padding: 15px;
 
   border-radius: $br_default;
@@ -39,11 +39,16 @@
     display: flex;
     gap: 15px;
     flex-direction: column;
+    width: 100%;
+  }
+}
 
-    @media screen and (min-width: 550px) {
-      & {
-        flex-direction: row;
-      }
+@media screen and (min-width: 550px) {
+  .container {
+    width: fit-content;
+
+    & > div {
+      flex-direction: row;
     }
   }
 }
