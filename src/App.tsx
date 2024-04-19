@@ -1,5 +1,7 @@
-import { Button, FieldContainer, TicketContainer } from 'components';
+import { useState } from 'react';
+import { Button, FieldContainer, TicketContainer, AfterSubmitMessages } from 'components';
 
+import makeRequest from 'hooks/makeRequest';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import {
   onCounterChange,
@@ -16,19 +18,70 @@ import './assets/styles/normalize.scss';
 import './assets/styles/theme.scss';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+
   const dispatch = useAppDispatch();
-  const { firstField, secondField, isSelectedAll, isResultCalculated, result } = useAppSelector(
-    (state) => state.ticket,
-  );
-// todo: добавить отправку результата
+  const { firstField, secondField, isSelectedAll, isResultCalculated, result, isResultSend } =
+    useAppSelector((state) => state.ticket);
+
   const handleSelect = (isFirstField: boolean, index: number) => {
     if (isFirstField) dispatch(onFirstFieldSelect(index));
     else dispatch(onSecondFieldSelect(index));
     dispatch(onCounterChange());
   };
 
-  const handleSubmit = () => {
+  const resubmit = async () => {
+    return await new Promise((resolve, reject) => {
+      let count = 2;
+
+      // url нужен для имитации ошибки, для разных ситуаций можно поменять
+      // рабочий - https://jsonplaceholder.typicode.com/posts
+      let url = 'https://jsonplaceholder.typicode.com/posts1';
+      const interval = setInterval(async () => {
+        count--;
+        const response = await makeRequest({
+          body: JSON.stringify(result),
+          url: url,
+        });
+
+        if (response.ok) {
+          resolve('Результат отправлен!');
+          setIsLoading(false);
+          clearTimeout(interval);
+        } else {
+          if (count === 0) {
+            reject('Произошла ошибка при отправке результата!');
+            setIsLoading(false);
+            clearTimeout(interval);
+          }
+          // url нужен для имитации ошибки, для разных ситуаций можно поменять
+          // рабочий - https://jsonplaceholder.typicode.com/posts
+          url = 'https://jsonplaceholder.typicode.com/posts';
+        }
+      }, 2000);
+    });
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
     dispatch(calculateResult());
+
+    const response = await makeRequest({
+      body: JSON.stringify(result),
+      url: 'https://jsonplaceholder.typicode.com/posts12131',
+      // url нужен для имитации ошибки
+      // рабочий - https://jsonplaceholder.typicode.com/posts
+    });
+
+    if (response.ok) {
+      setIsLoading(false);
+      return;
+    }
+
+    await resubmit()
+      .catch((reason) => setSubmitMessage(reason))
+      .then((value) => setSubmitMessage(value as string));
   };
 
   const handleRandomizer = () => {
@@ -38,18 +91,18 @@ function App() {
   };
 
   const randomButton = isSelectedAll ? <IcClose /> : <IcMagicWand />;
+  const resultMessage = result.isTicketWon
+    ? 'Ого, вы выиграли! Поздравляем!'
+    : 'К сожалению, вы ничего не выиграли =(';
 
   if (isResultCalculated) {
     return (
       <div className='App'>
-        <TicketContainer title='Билет 1'>
-          <div>
-            {result.isTicketWon
-              ? 'Ого, вы выиграли! Поздравляем!'
-              : 'К сожалению, вы ничего не выиграли =('}
-          </div>
-          {/* <div>Пожалуйста, подождите. Идет отправка результатов.</div> */}
-        </TicketContainer>
+        <AfterSubmitMessages
+          submitMessage={submitMessage}
+          isLoading={isLoading}
+          resultMessage={resultMessage}
+        />
       </div>
     );
   }

@@ -3,6 +3,9 @@ import { createRandomArray } from 'utils/createRandomArray';
 import { TTicketState } from 'types/general';
 
 const initialState: TTicketState = {
+  isSelectedAll: false,
+  isResultCalculated: false,
+  isResultSend: null,
   firstField: Array.from(Array(19), (_, i) => {
     return { number: i + 1, isSelected: false };
   }),
@@ -13,7 +16,6 @@ const initialState: TTicketState = {
     first: 0,
     second: 0,
   },
-  isSelectedAll: false,
   result: {
     selectedNumber: {
       firstField: [],
@@ -21,7 +23,6 @@ const initialState: TTicketState = {
     },
     isTicketWon: false,
   },
-  isResultCalculated: false,
 };
 
 const ticketSlice = createSlice({

@@ -20,4 +20,5 @@ export type TTicketState = {
   isSelectedAll: boolean;
   result: TResult;
   isResultCalculated: boolean;
+  isResultSend: boolean | null;
 };
