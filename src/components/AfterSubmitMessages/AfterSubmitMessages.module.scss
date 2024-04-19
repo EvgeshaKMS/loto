@@ -1,8 +1,13 @@
+
+.container {
+  width: 100%;
+}
+
 .result {
   font-weight: 600;
 }
 
-.loader {
+.submit {
   flex-direction: column !important;
   align-items: center;
 }

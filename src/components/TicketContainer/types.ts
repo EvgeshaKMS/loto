@@ -5,4 +5,5 @@ export interface TicketContainerProps {
   title: string;
   button?: ReactNode;
   onButtonClick?: () => void;
+  className?: string;
 }

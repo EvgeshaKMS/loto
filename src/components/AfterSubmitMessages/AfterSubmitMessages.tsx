@@ -9,15 +9,15 @@ const AfterSubmitMessages = ({
   isLoading,
 }: AfterSubmitMessagesProps) => {
   return (
-    <TicketContainer title='Билет 1'>
+    <TicketContainer className={styles.container} title='Билет 1'>
       <div className={styles.result}>{resultMessage}</div>
       {isLoading && (
-        <div className={styles.loader}>
+        <div className={styles.submit}>
           Пожалуйста, подождите. Идет отправка результатов.
           <Loader />
         </div>
       )}
-      {submitMessage && <div>{submitMessage}</div>}
+      {submitMessage && <div className={styles.submit}>{submitMessage}</div>}
     </TicketContainer>
   );
 };
