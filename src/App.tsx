@@ -75,6 +75,7 @@ function App() {
     });
 
     if (response.ok) {
+      setSubmitMessage('Результат отправлен!');
       setIsLoading(false);
       return;
     }
